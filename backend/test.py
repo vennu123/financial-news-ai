@@ -1,0 +1,1 @@
+print("My agentic project setup works!")

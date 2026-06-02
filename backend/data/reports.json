@@ -1,0 +1,84 @@
+[
+    {
+        "company": "nvidia",
+        "news": [
+            "Nvidia stock faces a key level that could make or break where it goes next - CNBC",
+            "Tigress Financial raises Nvidia stock price target on AI infrastructure growth - Investing.com",
+            "Billionaire Phillipe Laffont Recently Sold Oracle, Tesla, and Nvidia and Purchased a Stock Down 94% Since Its IPO in 2020 - The Motley Fool",
+            "An Upcoming IPO Could Soon Surpass NVIDIA As The World\u00e2\u20ac\u2122s Most Valuable Company (It\u00e2\u20ac\u2122s Not SpaceX) - Yahoo Finance",
+            "Taiwan Chip Stocks Rise As Nvidia Announces $150 Billion AI Investment Plans - NDTV"
+        ],
+        "sentiment": "Positive",
+        "confidence_score": 80,
+        "recommendation": "BUY",
+        "reason": "Nvidia's substantial AI investment plans and strong AI infrastructure growth indicate robust long-term prospects. Analyst upgrades reinforce confidence in its market leadership.",
+        "last_updated": "2026-05-27 22:20:56",
+        "raw_analysis": "Company: NVIDIA\nSentiment: Positive\nConfidence Score (0-100): 80\n\nKey Risks:\n- Potential for stock to break down from key technical levels.\n- Institutional investors might rotate out, impacting short-term sentiment.\n- Emergence of new competitors could challenge long-term market cap dominance.\n\nKey Opportunities:\n- Continued robust growth in AI infrastructure and enterprise demand.\n- Massive strategic investments in AI secure future market leadership and innovation.\n- Positive analyst sentiment and price target upgrades reflect strong fundamental outlook.\n\nFinal Recommendation: BUY\n\nReason:\nNvidia's substantial AI investment plans and strong AI infrastructure growth indicate robust long-term prospects. Analyst upgrades reinforce confidence in its market leadership."
+    },
+    {
+        "company": "tesla",
+        "news": [
+            "SpaceX-Tesla merger chatter reignites as Musk pushes rocket company toward Nasdaq - CNBC",
+            "Why is Tesla stock rallying today? - Investing.com",
+            "'SpaceX is his new baby at the expense of Tesla': Elon Musk\u00e2\u20ac\u2122s IPO could be bad news for his EV maker, investors warns - Fortune",
+            "Should You Buy Tesla Stock Before the Robotaxi Expansion Goes Nationwide? Here's What History Says. - The Motley Fool",
+            "Elon Musk\u00e2\u20ac\u2122s Tesla drops huge news for its customers - thestreet.com"
+        ],
+        "sentiment": "** Neutral",
+        "confidence_score": null,
+        "recommendation": "** HOLD",
+        "reason": "**\nWhile Tesla exhibits strong long-term growth opportunities, particularly with robotaxis, concerns regarding Elon Musk's divided attention between Tesla and SpaceX create short-term uncertainty. Investors should monitor developments related to Musk's focus and any potential SpaceX-Tesla integration.",
+        "last_updated": "2026-05-27 22:21:44",
+        "raw_analysis": "**Company:** Tesla\n**Sentiment:** Neutral\n**Confidence Score (0-100):** 65\n\n**Key Risks:**\n- Elon Musk's divided focus, potentially prioritizing SpaceX over Tesla's needs.\n- Uncertainty and potential resource/attention drain from a possible SpaceX IPO or merger with Tesla.\n\n**Key Opportunities:**\n- Significant growth potential from the nationwide robotaxi expansion.\n- Recent positive announcements and news for Tesla customers.\n- Current positive stock momentum and market rally.\n\n**Final Recommendation:** HOLD\n\n**Reason:**\nWhile Tesla exhibits strong long-term growth opportunities, particularly with robotaxis, concerns regarding Elon Musk's divided attention between Tesla and SpaceX create short-term uncertainty. Investors should monitor developments related to Musk's focus and any potential SpaceX-Tesla integration."
+    },
+    {
+        "company": "google",
+        "market_view": {
+            "sentiment": "Positive",
+            "confidence_score": 88,
+            "recommendation": "BUY",
+            "reason": "Google shows strong AI innovation and significant growth potential with positive stock forecasts. Despite recent stock dips, it presents a compelling buying opportunity."
+        },
+        "insights": {
+            "key_risks": [
+                "Alphabet stock continues slipping despite positive news",
+                "Increased competition in AI chip design (e.g., Nvidia)"
+            ],
+            "key_opportunities": [
+                "Strong AI innovation with Gemini 3.5",
+                "Potential for significant stock price growth ($600 forecasts)",
+                "Strategic moves in AI chip design and development",
+                "Potential undervaluation creating a buying opportunity"
+            ]
+        },
+        "news": [
+            "Google Gemini 3.5 Looks Like a Legit Flex, Yet Alphabet Stock Keeps Slipping \u2014 Is This a Glorious Buying Opportunity? - Yahoo Finance",
+            "Big Tech Earningspalooza: Microsoft, Meta, Amazon and Alphabet Results Are Here - Investopedia",
+            "Is Google Stock Going to $600? New Forecasts Say Yes - Watcher Guru",
+            "Goldman Sachs dispels major misconception on Google, Amazon earnings - thestreet.com",
+            "Google, Marvell In AI Chip Design Talks As Nvidia Competition Heats Up - Investor's Business Daily"
+        ],
+        "last_updated": "2026-05-27 23:06:00"
+    },
+    {
+        "company": "microsoft",
+        "market_view": {
+            "sentiment": "Neutral",
+            "confidence_score": 50,
+            "recommendation": "HOLD",
+            "reason": "Fallback due to parsing error"
+        },
+        "insights": {
+            "key_risks": [],
+            "key_opportunities": []
+        },
+        "news": [
+            "Microsoft Stock Blues Persist Despite Earnings Beat; Is Microsoft A Sell Now? - Investor's Business Daily",
+            "Microsoft Stock Discount May Be Ending as AI Catalysts Build - Investing.com",
+            "Piper Sandler reiterates Microsoft stock rating on Copilot gains - Investing.com",
+            "Internal Microsoft document spells out the company's buyout offer - Business Insider",
+            "Better Artificial Intelligence (AI) Stock: Alphabet or Microsoft - The Motley Fool"
+        ],
+        "last_updated": "2026-05-27 23:05:08"
+    }
+]
