@@ -1,16 +1,35 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import (
+    CORSMiddleware
+)
 
-from datetime import datetime, timedelta
+from datetime import (
+    datetime,
+    timedelta
+)
+
 import math
 
-from orchestrator.adk.runner import run_adk_pipeline
+from orchestrator.adk.runner import (
+    run_adk_pipeline
+)
 
-from services.db import db
-from services.stock_service import get_stock_data
-from agents.comparison_agent import generate_comparison_insight
-from services.response_normalizer import normalize_pipeline_output
-#from utils.ticker_mapper import find_ticker
+from services.db import (
+    db,
+    save_report
+)
+
+from services.stock_service import (
+    get_stock_data
+)
+
+from agents.comparison_agent import (
+    generate_comparison_insight
+)
+
+from services.response_normalizer import (
+    normalize_pipeline_output
+)
 
 
 app = FastAPI()
@@ -20,10 +39,6 @@ app = FastAPI()
 # CLEAN NaN / Infinity
 # -----------------------------------
 def clean_nan(obj):
-    """
-    Recursively replace NaN and Infinity
-    with None so FastAPI can serialize JSON.
-    """
 
     if isinstance(obj, dict):
         return {
@@ -32,10 +47,17 @@ def clean_nan(obj):
         }
 
     elif isinstance(obj, list):
-        return [clean_nan(item) for item in obj]
+        return [
+            clean_nan(item)
+            for item in obj
+        ]
 
     elif isinstance(obj, float):
-        if math.isnan(obj) or math.isinf(obj):
+
+        if (
+            math.isnan(obj)
+            or math.isinf(obj)
+        ):
             return None
 
     return obj
@@ -58,16 +80,26 @@ app.add_middleware(
 # -----------------------------------
 @app.get("/")
 def home():
-    return {"message": "Financial News AI API running"}
+
+    return {
+        "message":
+        "Financial News AI API running"
+    }
 
 
 # -----------------------------------
-# RUN PIPELINE (ADK)
+# RUN PIPELINE
 # -----------------------------------
 @app.get("/run/{company}")
-def run(company: str):
+def run(
+    company: str,
+    user_id: str = None
+):
 
-    company = company.lower().strip()
+    company = (
+        company.lower()
+        .strip()
+    )
 
     doc_ref = db.collection(
         "financial_reports"
@@ -76,82 +108,113 @@ def run(company: str):
     doc = doc_ref.get()
 
     # -------------------------------
-    # CACHE CHECK
+    # CACHE CHECK (3 HOURS)
     # -------------------------------
     if doc.exists:
 
-        cached_data = doc.to_dict()
+        cached_data = (
+            doc.to_dict()
+        )
 
-        # Clean cached NaN values
-        cached_data = clean_nan(cached_data)
+        cached_data = clean_nan(
+            cached_data
+        )
 
-        last_updated = cached_data.get(
-            "last_updated"
+        last_updated = (
+            cached_data.get(
+                "last_updated"
+            )
         )
 
         if last_updated:
 
-            last_updated = datetime.fromisoformat(
-                last_updated
+            last_updated = (
+                datetime.fromisoformat(
+                    last_updated
+                )
             )
 
-            age = datetime.now() - last_updated
+            age = (
+                datetime.now()
+                - last_updated
+            )
 
-            if age < timedelta(hours=6):
+            # CACHE LIMIT
+            if age < timedelta(
+                hours=3
+            ):
 
                 print(
                     f"Returning cached data for {company}"
                 )
 
+                # Save to user history
+                if user_id:
+
+                    save_report(
+                        user_id=user_id,
+                        company=company,
+                        data=cached_data
+                    )
+
                 return cached_data
 
     # -------------------------------
-    # RUN ADK PIPELINE
+    # RUN PIPELINE
     # -------------------------------
     print(
         f"Running ADK pipeline for {company}"
     )
 
-    raw_data = run_adk_pipeline(company)
+    raw_data = (
+        run_adk_pipeline(company)
+    )
 
-    data = normalize_pipeline_output(
-        raw_data
+    data = (
+        normalize_pipeline_output(
+            raw_data
+        )
     )
 
     # -------------------------------
     # STOCK DATA
     # -------------------------------
-    data["stock_data"] = get_stock_data(
+    data[
+        "stock_data"
+    ] = get_stock_data(
         company
     )
 
     # -------------------------------
     # TIMESTAMP
     # -------------------------------
-    data["last_updated"] = (
-        datetime.now().isoformat()
+    data[
+        "last_updated"
+    ] = (
+        datetime.now()
+        .isoformat()
     )
 
     # -------------------------------
-    # CLEAN NaN BEFORE SAVE
+    # CLEAN
     # -------------------------------
     data = clean_nan(data)
 
     # -------------------------------
-    # SAVE MAIN REPORT
+    # SAVE CACHE
     # -------------------------------
     doc_ref.set(data)
 
     # -------------------------------
-    # SAVE HISTORY
+    # SAVE USER HISTORY
     # -------------------------------
-    doc_ref.collection(
-        "history"
-    ).document(
-        datetime.now().strftime(
-            "%Y%m%d_%H%M%S"
+    if user_id:
+
+        save_report(
+            user_id=user_id,
+            company=company,
+            data=data
         )
-    ).set(data)
 
     return data
 
@@ -160,129 +223,148 @@ def run(company: str):
 # DB FETCH
 # -----------------------------------
 @app.get("/db/{company}")
-def get_from_db(company: str):
+def get_from_db(
+    company: str
+):
 
-    company = company.lower().strip()
+    company = (
+        company.lower()
+        .strip()
+    )
 
     doc = db.collection(
         "financial_reports"
-    ).document(company).get()
+    ).document(
+        company
+    ).get()
 
     if doc.exists:
 
-        data = doc.to_dict()
+        data = (
+            doc.to_dict()
+        )
 
         return clean_nan(data)
 
     return {
-        "message": "Company not found"
+        "message":
+        "Company not found"
     }
 
 
 # -----------------------------------
-# HISTORY
+# USER HISTORY
 # -----------------------------------
 @app.get("/history")
-def get_history():
+def get_history(
+    user_id: str
+):
 
-    docs = db.collection(
-        "financial_reports"
-    ).stream()
+    docs = (
+        db.collection("users")
+        .document(user_id)
+        .collection("history")
+        .stream()
+    )
 
-    reports = [
-        clean_nan(doc.to_dict())
-        for doc in docs
-    ]
+    reports = []
 
+    for doc in docs:
+
+        report = (
+            doc.to_dict()
+        )
+
+        report["doc_id"] = (
+            doc.id
+        )
+
+        reports.append(
+            clean_nan(report)
+        )
+
+    # NEWEST FIRST
     reports.sort(
-        key=lambda x: x.get(
-            "last_updated", ""
+        key=lambda x:
+        x.get(
+            "last_updated",
+            ""
         ),
         reverse=True
     )
 
     return {
-        "total_reports": len(reports),
-        "reports": reports
+        "total_reports":
+            len(reports),
+        "reports":
+            reports
     }
 
 
 # -----------------------------------
 # COMPANY HISTORY
 # -----------------------------------
-@app.get("/history/{company}")
+@app.get(
+    "/history/{company}"
+)
 def get_company_history(
-    company: str
+    company: str,
+    user_id: str
 ):
 
-    company = company.lower().strip()
+    company = (
+        company.lower()
+        .strip()
+    )
 
-    docs = (
-        db.collection(
-            "financial_reports"
-        )
-        .document(company)
+    doc = (
+        db.collection("users")
+        .document(user_id)
         .collection("history")
-        .stream()
+        .document(company)
+        .get()
     )
 
-    history = [
-        {
-            "id": doc.id,
-            "data": clean_nan(
-                doc.to_dict()
-            )
-        }
-        for doc in docs
-    ]
+    if doc.exists:
 
-    history.sort(
-        key=lambda x: x["id"],
-        reverse=True
-    )
+        return [{
+            "id":
+                doc.id,
+            "data":
+                clean_nan(
+                    doc.to_dict()
+                )
+        }]
 
-    return history
+    return []
 
 
 # -----------------------------------
-# COMPANY STATUS
-# -----------------------------------
-
-#@app.get(
-#    "/company-status/{company}"
-#)
-#def company_status(
-#    company: str
-#):
-
-#    ticker = find_ticker(company)
-#
-#    return {
-#        "company": company,
-#        "ticker": ticker,
-#        "is_public":
-#            ticker is not None
-#    }
-
-
-# -----------------------------------
-# COMPARE COMPANIES
+# COMPARE
 # -----------------------------------
 @app.get(
     "/compare/{company1}/{company2}"
 )
 def compare_companies(
     company1: str,
-    company2: str
+    company2: str,
+    user_id: str = None
 ):
 
-    company_1_data = run(company1)
-    company_2_data = run(company2)
+    company_1_data = run(
+        company1,
+        user_id
+    )
 
-    # Ensure stock data exists
+    company_2_data = run(
+        company2,
+        user_id
+    )
+
     if not company_1_data.get(
         "stock_data"
     ):
+
         company_1_data[
             "stock_data"
         ] = get_stock_data(
@@ -292,6 +374,7 @@ def compare_companies(
     if not company_2_data.get(
         "stock_data"
     ):
+
         company_2_data[
             "stock_data"
         ] = get_stock_data(
@@ -306,14 +389,18 @@ def compare_companies(
     )
 
     return clean_nan({
+
         "company_1":
             company_1_data,
+
         "company_2":
             company_2_data,
+
         "winner":
             comparison_result.get(
                 "winner"
             ),
+
         "comparison_reason":
             comparison_result.get(
                 "reason"

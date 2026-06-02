@@ -89,3 +89,9 @@ firebase-adminsdk.json
 tmp/
 temp/
 *.tmp
+
+
+test_adk.py
+test.py
+test
+reports.json

@@ -1,7 +1,18 @@
-import { useEffect, useState } from "react"
+import {
+  useEffect,
+  useState
+} from "react"
+
 import axios from "axios"
 
+
+const API_BASE_URL =
+  import.meta.env
+    .VITE_API_BASE_URL
+
+
 function HistorySidebar({
+  user,
   onSelectCompany,
   refreshTrigger
 }) {
@@ -9,23 +20,30 @@ function HistorySidebar({
   const [history, setHistory] =
     useState([])
 
-  // ------------------------
-  // FETCH HISTORY
-  // ------------------------
+
   const fetchHistory =
     async () => {
+
+      if (!user?.uid)
+        return
 
       try {
 
         const response =
-         await axios.get(
-  "https://financial-news-api-1043835311951.asia-south1.run.app/history"
-)
+          await axios.get(
+            `${API_BASE_URL}/history`,
+            {
+              params: {
+                user_id:
+                  user.uid
+              }
+            }
+          )
 
         const reports =
-          response.data.reports || []
+          response.data
+            .reports || []
 
-        // Sort newest first
         reports.sort(
           (a, b) =>
             new Date(
@@ -36,22 +54,26 @@ function HistorySidebar({
             )
         )
 
-        setHistory(reports)
+        setHistory(
+          reports
+        )
 
       } catch (error) {
+
         console.log(error)
       }
     }
 
-  // First load
+
   useEffect(() => {
     fetchHistory()
-  }, [])
+  }, [user])
 
-  // Refresh after new search
+
   useEffect(() => {
     fetchHistory()
   }, [refreshTrigger])
+
 
   return (
     <div
@@ -85,17 +107,22 @@ function HistorySidebar({
           </p>
         )}
 
-        {history.map((item, index) => (
+        {history.map(
+          (
+            item,
+            index
+          ) => (
 
-          <button
-            key={index}
-            onClick={() =>
-              onSelectCompany(
-                item.company
-              )
-            }
+            <button
+              key={index}
 
-            className="
+              onClick={() =>
+                onSelectCompany(
+                  item.company
+                )
+              }
+
+              className="
               w-full
               text-left
               bg-slate-100
@@ -107,55 +134,48 @@ function HistorySidebar({
               shadow-sm
               hover:shadow-md
               hover:scale-[1.02]
-            "
-          >
-
-            <div className="flex justify-between items-center">
-
-              <h3
-                className="
-                font-semibold
-                capitalize
-                text-slate-800
-                "
-              >
-                {item.company}
-              </h3>
-
-              <span
-                className={`
-                text-xs
-                px-2 py-1
-                rounded-full
-                font-semibold
-                ${
-                  item.sentiment ===
-                  "Positive"
-                    ? "bg-green-100 text-green-700"
-                    : item.sentiment ===
-                      "Negative"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }
-                `}
-              >
-                {item.sentiment}
-              </span>
-
-            </div>
-
-            <p
-              className="
-              text-sm
-              text-gray-500
-              mt-1
               "
             >
-              {item.recommendation}
-            </p>
 
-          </button>
-        ))}
+              <div
+                className="
+                flex
+                justify-between
+                items-center
+                "
+              >
+
+                <h3
+                  className="
+                  font-semibold
+                  capitalize
+                  text-slate-800
+                  "
+                >
+                  {item.company}
+                </h3>
+
+                <span
+                  className="
+                  text-xs
+                  px-2
+                  py-1
+                  rounded-full
+                  font-semibold
+                  bg-blue-100
+                  text-blue-700
+                  "
+                >
+                  {
+                    item.sentiment
+                  }
+                </span>
+
+              </div>
+
+            </button>
+          )
+        )}
 
       </div>
     </div>
