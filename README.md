@@ -328,16 +328,6 @@ GET /history/{company}
 
 **Firebase Authentication (Google Sign-In)**
 
----
-
-## Future Improvements
-
-* Real-time stock price streaming
-* Watchlist support
-* Portfolio tracking
-* Multi-agent financial reasoning
-* PDF report export
-* Advanced visualization dashboard
 
 ---
 
